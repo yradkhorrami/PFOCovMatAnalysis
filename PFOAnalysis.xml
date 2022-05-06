@@ -6,12 +6,7 @@
 		<constant name="DetectorModel" value="ILD_l5_o1_v02" />
 		<constant name="CompactFile" value="${lcgeo_DIR}/ILD/compact/${DetectorModel}/${DetectorModel}.xml" />
 		<constant name="OutputDirectory" value="/afs/desy.de/group/flc/pool/radkhory/JetErrorAnalysis/output" />
-		<constant name="OutputBaseName_iter" value="0" />
-		<constant name="R_value" value="0.5" />
-		<constant name="histColor" value="7" />
-		<constant name="createRootTree" value="false" />
 		<constant name="OutputBaseName" value="ClusterProperties" />
-		<constant name="OutputRootFile" value="${OutputBaseName}.root" />
 		<constant name="Verbosity" value="MESSAGE" />
 	</constants>
 
@@ -30,7 +25,7 @@
 		<parameter name="OutputSteeringFile" value="" />
 	</global>
 
-	<processor name="MyPFOCovMatAnalysis_before" type="PFOCovMatAnalysis">
+	<processor name="MyPFOCovMatAnalysis" type="PFOCovMatAnalysis">
 		<!--Name of the Input PFO Collection-->
 		<parameter name="PfoCollection" type="string" lcioInType="RECONSTRUCTEDPARTICLE">PandoraPFOs</parameter>
 		<!--Name of the MCTruthClusterLink Collection-->

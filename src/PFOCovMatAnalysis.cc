@@ -97,6 +97,8 @@ void PFOCovMatAnalysis::init()
 	m_pTFile = new TFile( m_rootFile.c_str() , "recreate" );
 	m_pTTree = new TTree( "PFOCovMat" , "PFOCovMat" );
 	m_pTTree->SetDirectory( m_pTFile );
+	m_pTTree->Branch( "Event" , &m_nEvt , "Event/I" );
+	m_pTTree->Branch( "Run" , &m_nRun , "Run/I" );
 	m_pTTree->Branch( "PDG" , &m_PDG );
 	m_pTTree->Branch( "Type" , &m_Type );
 	m_pTTree->Branch( "nTracks" , &m_nTracks );
@@ -174,6 +176,9 @@ void PFOCovMatAnalysis::processEvent( EVENT::LCEvent *pLCEvent )
 	this->Clear();
 	try
 	{
+		streamlog_out(MESSAGE) << "	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" << std::endl;
+		streamlog_out(MESSAGE) << "	///////////////////////////////////////////////// processing event " << m_nEvt << " in run " << m_nRun << " /////////////////////////////////////////////////////////////////////" << std::endl ;
+		streamlog_out(MESSAGE) << "	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" << std::endl;
 		inputPfoCollection = pLCEvent->getCollection( m_inputPfoCollection );
 		for (int i_pfo = 0; i_pfo < inputPfoCollection->getNumberOfElements() ; ++i_pfo)
 		{
