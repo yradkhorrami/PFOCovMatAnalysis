@@ -78,8 +78,24 @@ class PFOCovMatAnalysis : public Processor
 		TFile					*m_pTFile;
 	        TTree					*m_pTTree;
 
+		std::vector<int>			m_PDG{};
+		std::vector<int>			m_Type{};
 		std::vector<int>			m_nTracks{};
-		std::vector<int>			m_charge{};
+		std::vector<float>			m_charge{};
+		std::vector<float>			m_mcpPx{};
+		std::vector<float>			m_mcpPy{};
+		std::vector<float>			m_mcpPz{};
+		std::vector<float>			m_mcpPt{};
+		std::vector<float>			m_mcpEnergy{};
+		std::vector<float>			m_mcpTheta{};
+		std::vector<float>			m_mcpPhi{};
+		std::vector<float>			m_pfoPx{};
+		std::vector<float>			m_pfoPy{};
+		std::vector<float>			m_pfoPz{};
+		std::vector<float>			m_pfoPt{};
+		std::vector<float>			m_pfoEnergy{};
+		std::vector<float>			m_pfoTheta{};
+		std::vector<float>			m_pfoPhi{};
 		std::vector<float>			m_ResidualEnergy{};
 		std::vector<float>			m_ResidualTheta{};
 		std::vector<float>			m_ResidualPhi{};

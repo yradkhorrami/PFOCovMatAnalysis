@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="us-ascii" ?>
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+	<constants>
+		<constant name="lcgeo_DIR" value="/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/lcgeo/v00-16-07" />
+		<constant name="DetectorModel" value="ILD_l5_o1_v02" />
+		<constant name="CompactFile" value="${lcgeo_DIR}/ILD/compact/${DetectorModel}/${DetectorModel}.xml" />
+		<constant name="OutputDirectory" value="/afs/desy.de/group/flc/pool/radkhory/JetErrorAnalysis/output" />
+		<constant name="OutputBaseName_iter" value="0" />
+		<constant name="R_value" value="0.5" />
+		<constant name="histColor" value="7" />
+		<constant name="createRootTree" value="false" />
+		<constant name="OutputBaseName" value="ClusterProperties" />
+		<constant name="OutputRootFile" value="${OutputBaseName}.root" />
+		<constant name="Verbosity" value="MESSAGE" />
+	</constants>
+
+	<execute>
+		<processor name="MyPFOCovMatAnalysis" condition="" />
+	</execute>
+
+	<global>
+		<parameter name="LCIOInputFiles">test.slcio</parameter>
+		<parameter name="MaxRecordNumber" value="0" />
+		<parameter name="SkipNEvents" value="0" />
+		<parameter name="SupressCheck" value="false" />
+		<parameter name="GearXMLFile">/cvmfs/ilc.desy.de/sw/ILDConfig/v02-02-03/StandardConfig/production/Gear/gear_ILD_l5_v02.xml</parameter>
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG</parameter>
+		<parameter name="RandomSeed" value="1234567890" />
+		<parameter name="OutputSteeringFile" value="" />
+	</global>
+
+	<processor name="MyPFOCovMatAnalysis_before" type="PFOCovMatAnalysis">
+		<!--Name of the Input PFO Collection-->
+		<parameter name="PfoCollection" type="string" lcioInType="RECONSTRUCTEDPARTICLE">PandoraPFOs</parameter>
+		<!--Name of the MCTruthClusterLink Collection-->
+		<parameter name="ClusterMCTruthLinkCollection" type="string" lcioInType="LCRelation">ClusterMCTruthLink</parameter>
+		<!--Name of the ClusterMCTruthLink Collection-->
+		<parameter name="MCTruthClusterLinkCollection" type="string" lcioInType="LCRelation">MCTruthClusterLink</parameter>
+		<!--Name of the MCTruthMarlinTrkTracksLink Collection-->
+		<parameter name="MCTruthTrackLinkCollection" type="string" lcioInType="LCRelation">MCTruthMarlinTrkTracksLink</parameter>
+		<!--Name of the MarlinTrkTracksMCTruthLink Collection-->
+		<parameter name="TrackMCTruthLinkCollection" type="string" lcioInType="LCRelation">MarlinTrkTracksMCTruthLink</parameter>
+		<!-- name of Output root file -->
+		<parameter name="RootFile">${OutputDirectory}/${OutputBaseName}_PFOCovMatAnalysis.root</parameter>
+		<!--Minimum acceptable weight for Track -> MCParticle Link-->
+		<parameter name="MinWeightTrackMCTruthLink" type="float">0.50</parameter>
+		<!--Minimum acceptable weight for MCParticle -> Track Link-->
+		<parameter name="MinWeightMCTruthTrackLink" type="float">0.50</parameter>
+		<!--Minimum acceptable weight for Cluster -> MCParticle Link-->
+		<parameter name="MinWeightClusterMCTruthLink" type="float">0.50</parameter>
+		<!--Minimum acceptable weight for MCParticle -> Cluster Link-->
+		<parameter name="MinWeightMCTruthClusterLink" type="float">0.50</parameter>
+		<!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+		<parameter name="Verbosity" type="string">${Verbosity}</parameter>
+	</processor>
+</marlin>

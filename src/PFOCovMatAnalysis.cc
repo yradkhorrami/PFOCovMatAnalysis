@@ -97,8 +97,24 @@ void PFOCovMatAnalysis::init()
 	m_pTFile = new TFile( m_rootFile.c_str() , "recreate" );
 	m_pTTree = new TTree( "PFOCovMat" , "PFOCovMat" );
 	m_pTTree->SetDirectory( m_pTFile );
+	m_pTTree->Branch( "PDG" , &m_PDG );
+	m_pTTree->Branch( "Type" , &m_Type );
 	m_pTTree->Branch( "nTracks" , &m_nTracks );
-	m_pTTree->Branch( "charged" , &m_charge );
+	m_pTTree->Branch( "charge" , &m_charge );
+	m_pTTree->Branch( "mcpPx" , &m_mcpPx );
+	m_pTTree->Branch( "mcpPy" , &m_mcpPy );
+	m_pTTree->Branch( "mcpPz" , &m_mcpPz );
+	m_pTTree->Branch( "mcpPt" , &m_mcpPt );
+	m_pTTree->Branch( "mcpEnergy" , &m_mcpEnergy );
+	m_pTTree->Branch( "mcpTheta" , &m_mcpTheta );
+	m_pTTree->Branch( "mcpPhi" , &m_mcpPhi );
+	m_pTTree->Branch( "pfoPx" , &m_pfoPx );
+	m_pTTree->Branch( "pfoPy" , &m_pfoPy );
+	m_pTTree->Branch( "pfoPz" , &m_pfoPz );
+	m_pTTree->Branch( "pfoPt" , &m_pfoPt );
+	m_pTTree->Branch( "pfoEnergy" , &m_pfoEnergy );
+	m_pTTree->Branch( "pfoTheta" , &m_pfoTheta );
+	m_pTTree->Branch( "pfoPhi" , &m_pfoPhi );
 	m_pTTree->Branch( "ResidualEnergy" , &m_ResidualEnergy );
 	m_pTTree->Branch( "ResidualTheta" , &m_ResidualTheta );
 	m_pTTree->Branch( "ResidualPhi" , &m_ResidualPhi );
@@ -112,8 +128,24 @@ void PFOCovMatAnalysis::init()
 
 void PFOCovMatAnalysis::Clear()
 {
+	m_PDG.clear();
+	m_Type.clear();
 	m_nTracks.clear();
 	m_charge.clear();
+	m_mcpPx.clear();
+	m_mcpPy.clear();
+	m_mcpPz.clear();
+	m_mcpPt.clear();
+	m_mcpEnergy.clear();
+	m_mcpTheta.clear();
+	m_mcpPhi.clear();
+	m_pfoPx.clear();
+	m_pfoPy.clear();
+	m_pfoPz.clear();
+	m_pfoPt.clear();
+	m_pfoEnergy.clear();
+	m_pfoTheta.clear();
+	m_pfoPhi.clear();
 	m_ResidualEnergy.clear();
 	m_ResidualTheta.clear();
 	m_ResidualPhi.clear();
@@ -159,23 +191,25 @@ void PFOCovMatAnalysis::processEvent( EVENT::LCEvent *pLCEvent )
 			{
 				if ( fabs( pfo->getCharge() ) < 0.5 )
 				{
-					std::vector<MCParticle*> linkedMCPsToTracks{}; linkedMCPsToTracks.clear();
-					std::vector<MCParticle*> linkedMCPsToClusters{}; linkedMCPsToClusters.clear();
-					for ( unsigned int i_trk = 0 ; i_trk < pfo->getTracks().size() ; ++i_trk ) linkedMCPsToTracks.push_back( getMCParticleLinkedToTrack( pLCEvent , pfo->getTracks()[ i_trk ] ) );
-					for ( unsigned int i_clu = 0 ; i_clu < pfo->getClusters().size() ; ++i_clu ) linkedMCPsToTracks.push_back( getMCParticleLinkedToCluster( pLCEvent , pfo->getClusters()[ i_clu ] ) );
-					for ( unsigned int i_trk = 0 ; i_trk < linkedMCPsToTracks.size() ; ++i_trk )
+					MCParticle* linkedMCPsToTrack = NULL;
+					MCParticle* linkedMCPsToCluster = NULL;
+					for ( unsigned int i_trk = 0 ; i_trk < pfo->getTracks().size() ; ++i_trk )
 					{
-						for ( unsigned int i_clu = 0 ; i_clu < linkedMCPsToClusters.size() ; ++i_clu )
+						linkedMCPsToTrack = getMCParticleLinkedToTrack( pLCEvent , pfo->getTracks()[ i_trk ] );
+						for ( unsigned int i_clu = 0 ; i_clu < pfo->getClusters().size() ; ++i_clu )
 						{
-							if ( linkedMCPsToTracks[ i_trk ] == linkedMCPsToClusters[ i_clu ] ) linkedMCP = linkedMCPsToTracks[ i_trk ];
+							linkedMCPsToCluster = getMCParticleLinkedToCluster( pLCEvent , pfo->getClusters()[ i_clu ] );
+							if ( linkedMCPsToTrack == linkedMCPsToCluster ) linkedMCP = linkedMCPsToTrack->getParents()[ 0 ];
 						}
 					}
 				}
 				else
 				{
 					Track* track1 = pfo->getTracks()[ 0 ];
+					TrackState *track1StateAtFirstHit = track1->getTrackStates()[ 1 ];
 					Track* track2 = pfo->getTracks()[ 1 ];
-					if ( track1->getRadiusOfInnermostHit() > track2->getRadiusOfInnermostHit() )
+					TrackState *track2StateAtFirstHit = track2->getTrackStates()[ 1 ];
+					if ( sqrt( pow( track1StateAtFirstHit->getReferencePoint()[ 0 ] , 2 ) + pow( track1StateAtFirstHit->getReferencePoint()[ 1 ] , 2 ) + pow( track1StateAtFirstHit->getReferencePoint()[ 2 ] , 2 ) ) < sqrt( pow( track2StateAtFirstHit->getReferencePoint()[ 0 ] , 2 ) + pow( track2StateAtFirstHit->getReferencePoint()[ 1 ] , 2 ) + pow( track2StateAtFirstHit->getReferencePoint()[ 2 ] , 2 ) ) )
 					{
 						linkedMCP = getMCParticleLinkedToTrack( pLCEvent , track1 );
 					}
@@ -341,9 +375,24 @@ void PFOCovMatAnalysis::getNormalizedResiduals( EVENT::ReconstructedParticle* pf
 	 					2.0 * dTheta_dPx * dTheta_dPy * sigmaPxPy + 2.0 * dTheta_dPx * dTheta_dPz * sigmaPxPz + 2.0 * dTheta_dPy * dTheta_dPz * sigmaPyPz ) );
 	double sigmaPhi		= std::sqrt( std::fabs( std::pow( dPhi_dPx , 2 ) * sigmaPx2 + std::pow( dPhi_dPy , 2 ) * sigmaPy2 + 2.0 * dPhi_dPx * dPhi_dPy * sigmaPxPy ) );
 
-
+	m_PDG.push_back( linkedMCP->getPDG() );
+	m_Type.push_back( pfo->getType() );
 	m_nTracks.push_back( pfo->getTracks().size() );
 	m_charge.push_back( pfo->getCharge() );
+	m_mcpPx.push_back( linkedMCP->getMomentum()[ 0 ] );
+	m_mcpPy.push_back( linkedMCP->getMomentum()[ 1 ] );
+	m_mcpPz.push_back( linkedMCP->getMomentum()[ 2 ] );
+	m_mcpPt.push_back( sqrt( pow( linkedMCP->getMomentum()[ 0 ] , 2 ) + pow( linkedMCP->getMomentum()[ 1 ] , 2 ) ) );
+	m_mcpEnergy.push_back( linkedMCP->getEnergy() );
+	m_mcpTheta.push_back( mcpMomentum.Theta() );
+	m_mcpPhi.push_back( mcpMomentum.Phi() );
+	m_pfoPx.push_back( pfo->getMomentum()[ 0 ] );
+	m_pfoPy.push_back( pfo->getMomentum()[ 1 ] );
+	m_pfoPz.push_back( pfo->getMomentum()[ 2 ] );
+	m_pfoPt.push_back( sqrt( pow( pfo->getMomentum()[ 0 ] , 2 ) + pow( pfo->getMomentum()[ 1 ] , 2 ) ) );
+	m_pfoEnergy.push_back( pfo->getEnergy() );
+	m_pfoTheta.push_back( pfoMomentum.Theta() );
+	m_pfoPhi.push_back( pfoMomentum.Phi() );
 	m_ResidualEnergy.push_back( energyResigual );
 	m_ResidualTheta.push_back( thetaResidual );
 	m_ResidualPhi.push_back( phiResidual );
