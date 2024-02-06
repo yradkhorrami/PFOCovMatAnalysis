@@ -5,7 +5,7 @@
 		<constant name="lcgeo_DIR" value="/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/lcgeo/v00-16-07" />
 		<constant name="DetectorModel" value="ILD_l5_o1_v02" />
 		<constant name="CompactFile" value="${lcgeo_DIR}/ILD/compact/${DetectorModel}/${DetectorModel}.xml" />
-		<constant name="OutputDirectory" value="/afs/desy.de/group/flc/pool/radkhory/JetErrorAnalysis/output" />
+		<constant name="OutputDirectory" value="outputDirectory" />
 		<constant name="OutputBaseName" value="ClusterProperties" />
 		<constant name="Verbosity" value="MESSAGE" />
 	</constants>

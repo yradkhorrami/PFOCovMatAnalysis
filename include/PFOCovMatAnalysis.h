@@ -49,7 +49,7 @@ class PFOCovMatAnalysis : public Processor
 		virtual void processEvent( EVENT::LCEvent *pLCEvent );
 		EVENT::MCParticle* getMCParticleLinkedToTrack( EVENT::LCEvent *pLCEvent , EVENT::Track* inputTrack );
 		EVENT::MCParticle* getMCParticleLinkedToCluster( EVENT::LCEvent *pLCEvent , EVENT::Cluster* inputCluster );
-		virtual void getNormalizedResiduals( EVENT::ReconstructedParticle* pfo , EVENT::MCParticle* linkedMCP );
+		virtual void getNormalizedResiduals( EVENT::ReconstructedParticle* pfo , EVENT::MCParticle* linkedMCP , EVENT::MCParticle* linkedMCPToTrack1 , EVENT::MCParticle* linkedMCPToTrack2 );
 		virtual void check();
 		virtual void end();
 
@@ -58,6 +58,7 @@ class PFOCovMatAnalysis : public Processor
 		typedef std::vector<int>		IntVector;
 		typedef std::vector<double>		DoubleVector;
 		typedef std::vector<float>		FloatVector;
+		typedef std::vector<EVENT::MCParticle*>	MCPVector;
 
 		std::string				m_inputPfoCollection{};
 		std::string				m_TrackMCTruthLinkCollection{};
@@ -96,6 +97,9 @@ class PFOCovMatAnalysis : public Processor
 		std::vector<float>			m_pfoEnergy{};
 		std::vector<float>			m_pfoTheta{};
 		std::vector<float>			m_pfoPhi{};
+		std::vector<float>			m_ResidualPx{};
+		std::vector<float>			m_ResidualPy{};
+		std::vector<float>			m_ResidualPz{};
 		std::vector<float>			m_ResidualEnergy{};
 		std::vector<float>			m_ResidualTheta{};
 		std::vector<float>			m_ResidualPhi{};
@@ -105,6 +109,22 @@ class PFOCovMatAnalysis : public Processor
 		std::vector<float>			m_NormalizedResidualEnergy{};
 		std::vector<float>			m_NormalizedResidualTheta{};
 		std::vector<float>			m_NormalizedResidualPhi{};
+		std::vector<float>			m_sigmaPx2{};
+		std::vector<float>			m_sigmaPxPy{};
+		std::vector<float>			m_sigmaPy2{};
+		std::vector<float>			m_sigmaPxPz{};
+		std::vector<float>			m_sigmaPyPz{};
+		std::vector<float>			m_sigmaPz2{};
+		std::vector<float>			m_sigmaPxE{};
+		std::vector<float>			m_sigmaPyE{};
+		std::vector<float>			m_sigmaPzE{};
+		std::vector<float>			m_sigmaE2{};
+		std::vector<int>			m_linkedMCPToTrack1_PDG{};
+		std::vector<float>			m_linkedMCPToTrack1_TrueMomentum{};
+		std::vector<float>			m_linkedMCPToTrack1_TrueEnergy{};
+		std::vector<int>			m_linkedMCPToTrack2_PDG{};
+		std::vector<float>			m_linkedMCPToTrack2_TrueMomentum{};
+		std::vector<float>			m_linkedMCPToTrack2_TrueEnergy{};
 
 
 };
